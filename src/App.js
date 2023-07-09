@@ -8,37 +8,55 @@ function App() {
   const [employees, setEmployees] = useState(
     [                                       //Square brackets here represent an array of objects, say, employees here
       {
+        id: 1,
         name: 'Gaurav',
         role: 'Developer',
         img: 'https://images.pexels.com/photos/4144099/pexels-photo-4144099.jpeg',  
       },
       {
+        id: 2,
         name: 'Sal',
         role: 'Manager',
         img: 'https://images.pexels.com/photos/775358/pexels-photo-775358.jpeg',  
       },
       {
+        id: 3,
         name: 'Sanchez',
         role: 'Director of Eng',
         img: 'https://images.pexels.com/photos/3220360/pexels-photo-3220360.jpeg',  
       },
       {
+        id: 4,
         name: 'Shaurya',
         role: 'Software Engineer',
         img: 'https://images.pexels.com/photos/2741701/pexels-photo-2741701.jpeg',  
       },
       {
+        id:5,
         name: 'Corey',
         role: 'The DevOps Guy',
         img: 'https://images.pexels.com/photos/5397723/pexels-photo-5397723.jpeg',  
       },
       {
+        id: 6,
         name: 'Jake',
         role: 'Asst. Manager',
         img: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg',  
       },
     ]
   );
+
+    function updateEmployee(id, newName, newRole){
+      const updatedEmployees = employees.map((employee) => {
+        if(id==employee.id){
+          return {...employee, name: newName, role: newRole};
+        }
+
+        return employee;
+      });
+      setEmployees(updatedEmployees);
+    }
+
   const showEmployees = true;
   return (
     <div className="App">
@@ -53,10 +71,13 @@ function App() {
               {employees.map((employee) => {
                     return (
                       <Employee
-                        key={uuidv4()}
+                        //key={uuidv4()}
+                        key={employee.id}
+                        id={employee.id}
                         name={employee.name}
                         role={employee.role}
                         img={employee.img}
+                        updateEmployee={updateEmployee}
                       />
                     );
               })}          
