@@ -11,7 +11,7 @@ export default function Definition(){
     let { search } = useParams();           //destructuring the object 'search'
     const navigate = useNavigate();
 
-    useEffect(() => {
+    useEffect(() => {                                                   //Makes a request to the URL
         //console.log('page loaded');
         //const url = 'http://httpstatefwiufhwiuhf.com';
         //const url = 'http://httpstat.us/501';
