@@ -1,4 +1,4 @@
-import {useParams, Link, useNavigate} from 'react-router-dom';
+import {useParams, Link, useNavigate, useLocation} from 'react-router-dom';
 import {useEffect, useState} from 'react';
 import NotFound from '../components/NotFound';
 import { baseUrl } from '../shared';
@@ -12,6 +12,7 @@ export default function Customer(){
     const [notFound, setNotFound] = useState(false);     //To render a 404 component in the same page
     const [changed, setChanged] = useState(false);
     const [error, setError] = useState(false);
+    const location = useLocation();
 
     useEffect(() => {
         if(!tempCustomer)
@@ -34,8 +35,24 @@ export default function Customer(){
 
     useEffect(() => {
         const url = baseUrl + "api/customers/" + id;
-        fetch(url)
+        fetch(url, {
+            //We can specify the specific method as well, but here we are sending a GET request, and GET is the method by default so we don't need to specify anything
+            headers:
+            {
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + localStorage.getItem('access'),       //we don't need to put quotes in Authorization since it is perhaps a single string with no hyphens in between
+            }, 
+        })
         .then((response) => {
+            if(response.status === 401){
+                navigate('/login', {                          //navigate can take another argument which is an object
+                    state: {
+                        //previousUrl: '/customers',                                    //Inside os state we can place any property we want
+                        previousUrl: location.pathname,     
+                    },                                         //It is pivotal to have the property name here as 'state'
+                });
+            }
+
             if(response.status === 404){
                 /*
                 //navigate to a 404 page (new URL)
@@ -70,11 +87,25 @@ export default function Customer(){
         const url = baseUrl + 'api/customers/' + id;
         fetch(url, {
             method: 'POST',
+            /*
             headers: {          //'headers' is an object here
                 'Content-Type': 'application/json'
+            },*/
+            headers:
+            {
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + localStorage.getItem('access'),       //we don't need to put quotes in Authorization since it is perhaps a single string with no hyphens in between
             },
             body: JSON.stringify(tempCustomer)
         }).then((response) => {
+            if(response.status === 401){
+                navigate('/login', {                          //navigate can take another argument which is an object
+                    state: {
+                        //previousUrl: '/customers',                                    //Inside os state we can place any property we want
+                        previousUrl: location.pathname,     
+                    },                                         //It is pivotal to have the property name here as 'state'
+                });
+            }
             if(!response.ok) throw new Error('Something went wrong!');      //All the error in the 200-299 range (HTTP range)
             return response.json()
         }).then((data) => {
@@ -155,10 +186,25 @@ export default function Customer(){
                 className="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded"
                 onClick={(e) => {
                     const url = baseUrl + 'api/customers/' + id;
-                    fetch(url, {method:'DELETE', headers: {
+                    fetch(url, {method:'DELETE', 
+                        /*headers: {
                         'Content-Type':'application/json'
-                    }})       //That is how we define what method we are using with 'fetch'
+                    }*/
+                    headers:
+                    {
+                        'Content-Type': 'application/json',
+                        Authorization: 'Bearer ' + localStorage.getItem('access'),       //we don't need to put quotes in Authorization since it is perhaps a single string with no hyphens in between
+                    }
+                })       //That is how we define what method we are using with 'fetch'
                     .then((response) => {
+                        if(response.status === 401){
+                            navigate('/login', {                          //navigate can take another argument which is an object
+                                state: {
+                                    //previousUrl: '/customers',                                    //Inside os state we can place any property we want
+                                    previousUrl: location.pathname,     
+                                },                                         //It is pivotal to have the property name here as 'state'
+                            });
+                        }
                         if(!response.ok)
                             throw new Error('Something went wrong')
                         //return response.json() : We don't do this because after we delete an entry we don't return anything

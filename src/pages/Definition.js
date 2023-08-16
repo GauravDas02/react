@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, Link, useLocation } from "react-router-dom";
 import {v4 as uuidv4} from 'uuid';
 import NotFound from '../components/NotFound'
 import DefinitionSearch from "../components/DefinitionSearch";
@@ -10,6 +10,7 @@ export default function Definition(){
     const [notFound, setnotFound] = useState(false);
     let { search } = useParams();           //destructuring the object 'search'
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {                                                   //Makes a request to the URL
         //console.log('page loaded');
@@ -32,7 +33,10 @@ export default function Definition(){
                 }
 
                 else if(response.status === 401){
-                    navigate('/login');
+                    navigate('/login', {state: {
+                        previousUrl: location.pathname,     
+                    },
+                    });
                 }
 
                 else if(response.status === 500){
